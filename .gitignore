@@ -1,0 +1,33 @@
+dist
+.wrangler
+.output
+.vercel
+.netlify
+.vinxi
+app.config.timestamp_*.js
+
+# Environment
+.env
+.env*.local
+server/.env
+
+# dependencies
+node_modules/
+/node_modules
+server/node_modules/
+
+# Uploads
+server/uploads/
+uploads/
+
+# IDEs and editors
+.idea/
+.vscode/
+.project
+.classpath
+*.launch
+.settings/
+
+# System Files
+.DS_Store
+Thumbs.db
