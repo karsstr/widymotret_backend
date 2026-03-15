@@ -9,25 +9,26 @@ const router = Router();
 // POST /api/auth/login
 router.post('/login', async (req: Request, res: Response) => {
     try {
-        const { username, password } = req.body;
+        const { username, email, password } = req.body;
+        const emailOrUsername = email || username;
 
-        if (!username || !password) {
+        if (!emailOrUsername || !password) {
             res.status(400).json({
                 success: false,
-                message: 'Username dan password wajib diisi',
+                message: 'Email dan password wajib diisi',
             });
             return;
         }
 
-        // Find admin by username
+        // Find admin by email
         const admin = await prisma.admin.findUnique({
-            where: { username },
+            where: { email: emailOrUsername },
         });
 
         if (!admin) {
             res.status(401).json({
                 success: false,
-                message: 'Username atau password salah',
+                message: 'Email atau password salah',
             });
             return;
         }
@@ -38,7 +39,7 @@ router.post('/login', async (req: Request, res: Response) => {
         if (!isPasswordValid) {
             res.status(401).json({
                 success: false,
-                message: 'Username atau password salah',
+                message: 'Email atau password salah',
             });
             return;
         }
@@ -54,7 +55,7 @@ router.post('/login', async (req: Request, res: Response) => {
                 token,
                 admin: {
                     id: admin.id,
-                    username: admin.username,
+                    username: admin.email,
                 },
             },
         });
@@ -73,7 +74,7 @@ router.get('/me', authMiddleware as any, async (req: Request, res: Response) => 
         const adminId = (req as AuthRequest).adminId;
         const admin = await prisma.admin.findUnique({
             where: { id: adminId },
-            select: { id: true, username: true, createdAt: true },
+            select: { id: true, email: true, createdAt: true },
         });
 
         if (!admin) {

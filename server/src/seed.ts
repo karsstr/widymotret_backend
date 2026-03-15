@@ -8,18 +8,19 @@ async function main() {
     console.log('🌱 Seeding database...');
 
     // Create default admin user
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    // Password: Widy@M0tr3t2026 (strong, memorable, with capital letters and numbers)
+    const hashedPassword = await bcrypt.hash('Widy@M0tr3t2026', 10);
 
     const admin = await prisma.admin.upsert({
-        where: { username: 'admin' },
+        where: { email: 'admin@widymotret.com' },
         update: {},
         create: {
-            username: 'admin',
+            email: 'admin@widymotret.com',
             password: hashedPassword,
         },
     });
 
-    console.log(`✅ Admin user created: ${admin.username} (password: admin123)`);
+    console.log(`✅ Admin user created: ${admin.email} (password: Widy@M0tr3t2026`);
 
     // Seed all packages from servicesData
     const packages = [

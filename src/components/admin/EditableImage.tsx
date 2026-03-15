@@ -1,5 +1,7 @@
 import { createSignal, Show } from 'solid-js';
 import { BiRegularPencil } from 'solid-icons/bi';
+import { updateContent, uploadImage } from '../../services/contentApi';
+import { contentStore } from '../../stores/contentStore';
 
 interface EditableImageProps {
   label: string;
@@ -19,17 +21,47 @@ export const EditableImage = (props: EditableImageProps) => {
   const [currentValue, setCurrentValue] = createSignal(props.value);
   const [imgError, setImgError] = createSignal(false);
   const [isUploading, setIsUploading] = createSignal(false);
+  const [isSaving, setIsSaving] = createSignal(false);
+  const [error, setError] = createSignal<string | null>(null);
   const fileInputId = `file-input-${Math.random().toString(36).substr(2, 9)}`;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const newValue = currentValue().trim();
     if (!newValue) {
       props.onError?.('URL tidak boleh kosong');
       return;
     }
-    setIsEditing(false);
-    setImgError(false);
-    props.onSave?.(newValue);
+
+    // If nothing changed, just close
+    if (newValue === props.value) {
+      setIsEditing(false);
+      return;
+    }
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      const response = await updateContent(props.section, props.field, newValue);
+      if (response.success) {
+        setIsEditing(false);
+        setImgError(false);
+        
+        // Refetch data from backend to ensure persistence
+        await contentStore.loadField(props.section, props.field);
+        
+        props.onSave?.(newValue);
+      } else {
+        setError(response.message || 'Gagal menyimpan');
+        props.onError?.(response.message || 'Gagal menyimpan');
+      }
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Terjadi kesalahan';
+      setError(errorMsg);
+      props.onError?.(errorMsg);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
@@ -56,21 +88,10 @@ export const EditableImage = (props: EditableImageProps) => {
 
     setIsUploading(true);
     try {
-      if (props.onUpload) {
-        // If callback provided, use it to upload
-        const url = await props.onUpload(file);
-        setCurrentValue(url);
-        setImgError(false);
-      } else {
-        // Default: convert to data URL for FE-only usage
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const url = event.target?.result as string;
-          setCurrentValue(url);
-          setImgError(false);
-        };
-        reader.readAsDataURL(file);
-      }
+      const uploadFn = props.onUpload || uploadImage;
+      const url = await uploadFn(file);
+      setCurrentValue(url);
+      setImgError(false);
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Gagal upload gambar';
       props.onError?.(errorMsg);
@@ -161,16 +182,20 @@ export const EditableImage = (props: EditableImageProps) => {
 
             {/* Actions */}
             <div class="flex gap-2">
+              <Show when={error()}>
+                <div class="text-xs text-red-500">{error()}</div>
+              </Show>
+
               <button
                 onClick={handleSave}
-                disabled={isUploading()}
+                disabled={isUploading() || isSaving()}
                 class="px-4 py-1.5 bg-[#576250] text-white rounded-md text-sm font-medium hover:bg-[#464C43] transition disabled:opacity-50"
               >
-                Simpan
+                {isSaving() ? '⏳ Menyimpan...' : 'Simpan'}
               </button>
               <button
                 onClick={handleCancel}
-                disabled={isUploading()}
+                disabled={isUploading() || isSaving()}
                 class="px-4 py-1.5 bg-gray-200 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-300 transition disabled:opacity-50"
               >
                 Batal

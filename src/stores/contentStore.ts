@@ -138,11 +138,12 @@ const createContentStore = () => {
     }
   };
 
-  // Save field to the backend AND update local state
-  const updateFieldLocal = async (section: string, field: string, value: string) => {
+  // Update local state only (no backend call).
+  // Backend persistence is handled by contentApi.updateContent(),
+  // which is called by EditableText before invoking this via onSave.
+  const updateFieldLocal = (section: string, field: string, value: string) => {
     const key = `${section}.${field}`;
 
-    // Optimistically update local state
     setState(prev => {
       const newMap = new Map(prev.content);
       const existing = newMap.get(key);
@@ -169,21 +170,6 @@ const createContentStore = () => {
         lastUpdated: new Date(),
       };
     });
-
-    // Persist to backend
-    try {
-      const token = localStorage.getItem('adminToken');
-      await fetch(`${API_BASE}/content/${section}/${field}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({ value }),
-      });
-    } catch (err) {
-      console.error('Failed to save content to backend:', err);
-    }
   };
 
   // Clear error

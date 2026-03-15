@@ -95,7 +95,10 @@ router.put('/:section/:field', authMiddleware as any, async (req: Request, res: 
         const { section, field } = req.params;
         const { value } = req.body;
 
+        console.log(`[DEBUG content.PUT] Updating: section=${section}, field=${field}, value=${value}`);
+
         if (value === undefined) {
+            console.log(`[DEBUG content.PUT] Value is undefined`);
             res.status(400).json({
                 success: false,
                 message: 'Value wajib diisi',
@@ -107,6 +110,13 @@ router.put('/:section/:field', authMiddleware as any, async (req: Request, res: 
             where: { section_field: { section: section as string, field: field as string } },
             update: { value },
             create: { section: section as string, field: field as string, value },
+        });
+
+        console.log(`[DEBUG content.PUT] Successfully upserted:`, {
+            id: content.id,
+            section: content.section,
+            field: content.field,
+            value: content.value,
         });
 
         res.json({
@@ -121,7 +131,7 @@ router.put('/:section/:field', authMiddleware as any, async (req: Request, res: 
             },
         });
     } catch (error) {
-        console.error('Update content error:', error);
+        console.error('[DEBUG content.PUT] Error:', error);
         res.status(500).json({ success: false, message: 'Terjadi kesalahan server' });
     }
 });

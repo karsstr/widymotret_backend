@@ -155,7 +155,7 @@ const AdminPricelist: Component = () => {
 
     const file = target.files[0];
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('file', file);
 
     const token = authStore.getToken();
 
@@ -170,8 +170,13 @@ const AdminPricelist: Component = () => {
 
       const data = await res.json();
       if (data.success) {
-        setFormImages(prev => [...prev, data.url]);
-        showToast('success', 'Gambar berhasil diunggah!');
+        const uploadedUrl = data?.data?.url;
+        if (uploadedUrl) {
+          setFormImages(prev => [...prev, uploadedUrl]);
+          showToast('success', 'Gambar berhasil diunggah!');
+        } else {
+          showToast('error', 'Upload berhasil tapi URL gambar tidak ditemukan');
+        }
       } else {
         showToast('error', data.message || 'Gagal mengunggah gambar');
       }

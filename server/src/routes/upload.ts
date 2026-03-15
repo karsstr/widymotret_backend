@@ -38,20 +38,37 @@ const upload = multer({
 });
 
 // POST /api/upload - Single image upload (protected)
-router.post('/', authMiddleware as any, upload.single('image'), (req: Request, res: Response) => {
+router.post('/', authMiddleware as any, upload.single('file'), (req: Request, res: Response) => {
     try {
+        console.log(`[DEBUG upload] Request received. File:`, req.file ? {
+            fieldname: req.file.fieldname,
+            originalname: req.file.originalname,
+            encoding: req.file.encoding,
+            mimetype: req.file.mimetype,
+            destination: req.file.destination,
+            filename: req.file.filename,
+            path: req.file.path,
+            size: req.file.size,
+        } : 'NO FILE');
+
         if (!req.file) {
+            console.log(`[DEBUG upload] No file uploaded`);
             res.status(400).json({ success: false, message: 'Tidak ada file yang diunggah' });
             return;
         }
 
         const imageUrl = `/uploads/${req.file.filename}`;
+        console.log(`[DEBUG upload] File saved successfully at: ${imageUrl}`);
+        
         res.json({
             success: true,
             message: 'File berhasil diunggah',
-            url: imageUrl
+            data: {
+                url: imageUrl
+            }
         });
     } catch (error: any) {
+        console.error(`[DEBUG upload] Error:`, error);
         res.status(500).json({ success: false, message: error.message });
     }
 });

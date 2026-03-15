@@ -1,6 +1,7 @@
 import { createSignal, Show } from 'solid-js';
 import { BiRegularPencil } from 'solid-icons/bi';
 import { updateContent } from '../../services/contentApi';
+import { contentStore } from '../../stores/contentStore';
 import './EditableText.css';
 
 interface EditableTextProps {
@@ -48,9 +49,16 @@ export const EditableText = (props: EditableTextProps) => {
 
     try {
       const response = await updateContent(props.section, props.field, newValue);
+      console.log('updateContent response:', response);
 
       if (response.success && response.data) {
         setIsEditing(false);
+        console.log('Save berhasil, refetch section:', props.section);
+        
+        // Reload entire section to ensure all data is fresh from backend
+        await contentStore.loadSection(props.section);
+        console.log('Section reloaded');
+        
         props.onSave?.(newValue);
       } else {
         setError(response.message || 'Gagal menyimpan konten');
