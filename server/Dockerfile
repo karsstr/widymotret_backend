@@ -9,11 +9,8 @@ COPY tsconfig.json ./
 COPY src ./src
 COPY prisma ./prisma
 
-# Install dependencies
+# Install all dependencies
 RUN npm ci
-
-# Build TypeScript
-RUN npm run build 2>/dev/null || npx tsc
 
 # Runtime stage
 FROM node:22-alpine
@@ -26,8 +23,8 @@ COPY package*.json ./
 # Install production dependencies
 RUN npm ci --omit=dev
 
-# Copy build output and prisma
-COPY --from=builder /app/dist ./dist
+# Copy source (run TypeScript directly via tsx or ts-node)
+COPY src ./src
 COPY prisma ./prisma
 
 # Expose port
@@ -36,5 +33,5 @@ EXPOSE 3000
 # Set environment
 ENV NODE_ENV=production
 
-# Start app
-CMD ["node", "dist/index.js"]
+# Start app with tsx to run TypeScript directly
+CMD ["npx", "tsx", "src/index.ts"]
