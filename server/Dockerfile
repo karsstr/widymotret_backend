@@ -1,31 +1,15 @@
-# Build stage
-FROM node:22-alpine as builder
+FROM node:22-alpine
 
 WORKDIR /app
 
-# Copy all files
+# Copy project files
 COPY package*.json ./
 COPY tsconfig.json ./
 COPY src ./src
 COPY prisma ./prisma
 
-# Install all dependencies
+# Install all dependencies (including dev deps for ts-node runtime)
 RUN npm ci
-
-# Runtime stage
-FROM node:22-alpine
-
-WORKDIR /app
-
-# Copy package files
-COPY package*.json ./
-
-# Install production dependencies
-RUN npm ci --omit=dev
-
-# Copy source (run TypeScript directly via tsx or ts-node)
-COPY src ./src
-COPY prisma ./prisma
 
 # Expose port
 EXPOSE 3000
@@ -33,5 +17,5 @@ EXPOSE 3000
 # Set environment
 ENV NODE_ENV=production
 
-# Start app with tsx to run TypeScript directly
-CMD ["npx", "tsx", "src/index.ts"]
+# Start app using existing ts-node script
+CMD ["npm", "run", "dev"]
