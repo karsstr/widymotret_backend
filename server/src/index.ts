@@ -14,7 +14,8 @@ import fs from 'fs';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT) || 5000;
+const HOST = '0.0.0.0';
 
 // Middleware
 app.use(cors({
@@ -38,12 +39,16 @@ if (!fs.existsSync(uploadDir)) {
 app.use('/uploads', express.static(uploadDir));
 
 // Health check
+app.get('/', (req, res) => {
+    res.json({ status: 'ok', message: 'Widymotret API is running' });
+});
+
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Widymotret API is running' });
 });
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`✅ Server running on http://localhost:${PORT}`);
-    console.log(`📋 API Health: http://localhost:${PORT}/api/health`);
+app.listen(PORT, HOST, () => {
+    console.log(`✅ Server running on http://${HOST}:${PORT}`);
+    console.log(`📋 API Health: http://${HOST}:${PORT}/api/health`);
 });
