@@ -17,5 +17,5 @@ EXPOSE 3000
 # Set environment
 ENV NODE_ENV=production
 
-# Start app using existing ts-node script
-CMD ["npm", "run", "dev"]
+# Start app using explicit start command
+CMD ["npm", "start"]
