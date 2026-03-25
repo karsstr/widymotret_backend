@@ -12,7 +12,7 @@ COPY prisma ./prisma
 RUN npm ci
 
 # Expose port
-EXPOSE 3000
+EXPOSE 8080
 
 # Set environment
 ENV NODE_ENV=production
