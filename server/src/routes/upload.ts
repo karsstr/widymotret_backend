@@ -2,7 +2,7 @@ import express, { Request, Response, Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { authMiddleware } from '../middleware/auth';
+import { authMiddleware } from '../middleware/auth.ts';
 
 const router: Router = express.Router();
 
