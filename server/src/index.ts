@@ -14,15 +14,35 @@ import fs from 'fs';
 dotenv.config();
 
 const app = express();
-const PORT = Number(process.env.PORT) || 5000;
+const PORT = Number(process.env.PORT) || 8080;
 const HOST = '0.0.0.0';
 
-// Middleware
-app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:5173'],
+// Middleware - Custom CORS with function to handle dynamic Vercel previews
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://widymotretstudio.vercel.app',
+    'https://widymotretstudio-git-be-fix-dimazs-projects.vercel.app',
+];
+
+const corsOptions = {
+    origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+        if (!origin || allowedOrigins.includes(origin) || origin?.includes('.vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
-}));
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Global OPTIONS handler for preflight requests
+app.options('*', cors(corsOptions));
 
 // API Routes
 app.use('/api/auth', authRoutes);
