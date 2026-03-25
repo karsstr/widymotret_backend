@@ -3,32 +3,30 @@ FROM node:22-alpine as builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy all files
 COPY package*.json ./
 COPY tsconfig.json ./
+COPY src ./src
+COPY prisma ./prisma
 
 # Install dependencies
 RUN npm ci
 
-# Copy source
-COPY src ./src
-COPY prisma ./prisma
-
 # Build TypeScript
-RUN npx tsc
+RUN npm run build 2>/dev/null || npx tsc
 
 # Runtime stage
 FROM node:22-alpine
 
 WORKDIR /app
 
-# Copy package files for production
+# Copy package files
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production
+# Install production dependencies
+RUN npm ci --omit=dev
 
-# Copy migrations
+# Copy build output and prisma
 COPY --from=builder /app/dist ./dist
 COPY prisma ./prisma
 
