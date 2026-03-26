@@ -27,8 +27,11 @@ COPY src ./src
 # Generate Prisma client
 RUN npx prisma generate
 
+# Create entrypoint script to run migrations before app start
+RUN echo '#!/bin/sh\necho "Running database migrations..."\nnpx prisma migrate deploy\necho "Migrations completed"\necho "Starting application..."\nnpm start' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
 # Expose port
 EXPOSE 8080
 
-# Start application
-CMD ["npm", "start"]
+# Use entrypoint to run migrations then start app
+ENTRYPOINT ["/app/entrypoint.sh"]
