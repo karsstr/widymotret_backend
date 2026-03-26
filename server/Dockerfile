@@ -30,5 +30,5 @@ RUN npx prisma generate
 # Expose port
 EXPOSE 8080
 
-# Run migrations and start app
-CMD sh -c "npx prisma migrate deploy && npm start"
+# Start app (migrations should be run separately via Railway shell or local)
+CMD ["npm", "start"]
