@@ -4,7 +4,7 @@
     "description": "Backend API for Widymotret Photography",
     "main": "src/index.ts",
     "scripts": {
-        "start": "npx ts-node --transpile-only src/index.ts",
+        "start": "npx prisma generate && npx ts-node --transpile-only src/index.ts",
         "dev": "npx ts-node --transpile-only src/index.ts",
         "seed": "npx ts-node --transpile-only src/seed.ts",
         "prisma:generate": "npx prisma generate",
