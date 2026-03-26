@@ -24,9 +24,6 @@ COPY package*.json ./
 COPY prisma ./prisma
 COPY src ./src
 
-# Generate Prisma client
-RUN npx prisma generate
-
 # Expose port
 EXPOSE 8080
 
