@@ -11,6 +11,9 @@ console.log('🔄 [1/3] Initializing Express app...');
 const app = express();
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = '0.0.0.0';
+console.log('   PORT env:', process.env.PORT);
+console.log('   PORT parsed:', PORT);
+console.log('   HOST:', HOST);
 
 console.log('🔄 [2/3] Setting up CORS middleware...');
 
@@ -63,10 +66,14 @@ app.use((err: any, req: any, res: any, next: any) => {
 });
 
 console.log('🔄 Starting server...');
+console.log('   Calling app.listen on', HOST + ':' + PORT);
+
 // Start server
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
+    console.log('+++++++++++++++++++++++++++++++++');
     console.log(`✅ Server running on http://${HOST}:${PORT}`);
     console.log(`📋 API Health: http://${HOST}:${PORT}/api/health`);
+    console.log('+++++++++++++++++++++++++++++++++');
 });
 
 // Global error handlers
@@ -78,3 +85,14 @@ process.on('uncaughtException', (error) => {
     console.error('❌ Uncaught Exception:', error);
     process.exit(1);
 });
+
+// Server event handlers
+server.on('error', (err: any) => {
+    console.error('🚨 Server error:', err);
+});
+
+server.on('clientError', (err: any) => {
+    console.error('🚨 Client error:', err);
+});
+
+console.log('✅ Error handlers registered');
