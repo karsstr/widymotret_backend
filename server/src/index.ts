@@ -51,6 +51,13 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.options('*', cors(corsOptions));
 
+// Serve uploaded files
+const uploadDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadDir));
+
 console.log('🔄 [4/4] Registering endpoints...');
 
 // Health check - must be before general request logging
