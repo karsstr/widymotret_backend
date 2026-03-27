@@ -13,9 +13,12 @@ import fs from 'fs';
 // Load environment variables
 dotenv.config();
 
+console.log('🔄 [1/5] Initializing Express app...');
 const app = express();
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = '0.0.0.0';
+
+console.log('🔄 [2/5] Setting up CORS middleware...');
 
 // Middleware - Custom CORS with function to handle dynamic Vercel previews
 const allowedOrigins = [
@@ -44,22 +47,14 @@ app.use(express.json());
 // Global OPTIONS handler for preflight requests
 app.options('*', cors(corsOptions));
 
+console.log('🔄 [3/5] Mounting API routes...');
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/packages', packagesRoutes);
 app.use('/api/portfolios', portfoliosRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/upload', uploadRoutes);
-
-// Error handling middleware
-app.use((err: any, req: any, res: any, next: any) => {
-    console.error('🚨 Request Error:', {
-        message: err?.message,
-        code: err?.code,
-        stack: err?.stack?.split('\n').slice(0, 3).join('\n'),
-    });
-    res.status(500).json({ status: 'error', message: err?.message || 'Internal Server Error' });
-});
+console.log('🔄 [4/5] Setting up static files...');
 
 // Static files for uploads
 const uploadDir = path.join(process.cwd(), 'uploads');
@@ -68,6 +63,7 @@ if (!fs.existsSync(uploadDir)) {
 }
 app.use('/uploads', express.static(uploadDir));
 
+console.log('🔄 [5/5] Registering health check endpoints...');
 // Health check
 app.get('/', (req, res) => {
     try {
@@ -88,6 +84,17 @@ app.get('/api/health', (req, res) => {
     }
 });
 
+// Error handling middleware (MUST be last)
+app.use((err: any, req: any, res: any, next: any) => {
+    console.error('🚨 Request Error:', {
+        message: err?.message,
+        code: err?.code,
+        stack: err?.stack?.split('\n').slice(0, 3).join('\n'),
+    });
+    res.status(500).json({ status: 'error', message: err?.message || 'Internal Server Error' });
+});
+
+console.log('🔄 Calling app.listen()...');
 // Start server
 app.listen(PORT, HOST, () => {
     console.log(`✅ Server running on http://${HOST}:${PORT}`);
