@@ -51,6 +51,16 @@ app.use('/api/portfolios', portfoliosRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/upload', uploadRoutes);
 
+// Error handling middleware
+app.use((err: any, req: any, res: any, next: any) => {
+    console.error('🚨 Request Error:', {
+        message: err?.message,
+        code: err?.code,
+        stack: err?.stack?.split('\n').slice(0, 3).join('\n'),
+    });
+    res.status(500).json({ status: 'error', message: err?.message || 'Internal Server Error' });
+});
+
 // Static files for uploads
 const uploadDir = path.join(process.cwd(), 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -60,11 +70,22 @@ app.use('/uploads', express.static(uploadDir));
 
 // Health check
 app.get('/', (req, res) => {
-    res.json({ status: 'ok', message: 'Widymotret API is running' });
+    try {
+        res.json({ status: 'ok', message: 'Widymotret API is running' });
+    } catch (error) {
+        console.error('❌ Error in / handler:', error);
+        res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    }
 });
 
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'Widymotret API is running' });
+    try {
+        console.log('📍 Health check requested');
+        res.json({ status: 'ok', message: 'Widymotret API is running' });
+    } catch (error) {
+        console.error('❌ Error in /api/health handler:', error);
+        res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    }
 });
 
 // Start server
