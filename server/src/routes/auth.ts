@@ -8,11 +8,17 @@ const router = Router();
 
 // POST /api/auth/login
 router.post('/login', async (req: Request, res: Response) => {
+    console.log('🔵 [auth] POST /login handler called');
+    console.log('   Body:', JSON.stringify(req.body).substring(0, 100));
+    
     try {
         const { username, email, password } = req.body;
         const emailOrUsername = email || username;
 
+        console.log('   Processing login for:', emailOrUsername);
+
         if (!emailOrUsername || !password) {
+            console.log('   ❌ Missing credentials');
             res.status(400).json({
                 success: false,
                 message: 'Email dan password wajib diisi',
@@ -20,12 +26,14 @@ router.post('/login', async (req: Request, res: Response) => {
             return;
         }
 
+        console.log('   🔍 Looking up admin in database...');
         // Find admin by email
         const admin = await prisma.admin.findUnique({
             where: { email: emailOrUsername },
         });
 
         if (!admin) {
+            console.log('   ❌ Admin not found');
             res.status(401).json({
                 success: false,
                 message: 'Email atau password salah',
@@ -97,5 +105,7 @@ router.get('/me', authMiddleware as any, async (req: Request, res: Response) => 
         });
     }
 });
+
+console.log('✅ [auth] Router configured with routes: POST /login, GET /me');
 
 export default router;
