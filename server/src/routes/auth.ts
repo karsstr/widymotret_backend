@@ -6,6 +6,51 @@ import { authMiddleware, AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
+type AdminLoginRow = {
+    id: number;
+    password: string;
+    username: string;
+};
+
+async function findAdminForLogin(loginId: string): Promise<AdminLoginRow | null> {
+    try {
+        const byUsername = await prisma.$queryRaw<AdminLoginRow[]>`
+            SELECT id, password, username
+            FROM admins
+            WHERE username = ${loginId}
+            LIMIT 1
+        `;
+        if (byUsername.length > 0) {
+            return byUsername[0];
+        }
+    } catch (err: any) {
+        const msg = String(err?.message || err);
+        console.error('⚠️ [auth] Username lookup failed:', msg);
+        // Fall through to email lookup for legacy/alternate schemas
+    }
+
+    try {
+        const byEmail = await prisma.$queryRaw<Array<{ id: number; password: string; email: string }>>`
+            SELECT id, password, email
+            FROM admins
+            WHERE email = ${loginId}
+            LIMIT 1
+        `;
+        if (byEmail.length > 0) {
+            return {
+                id: byEmail[0].id,
+                password: byEmail[0].password,
+                username: byEmail[0].email,
+            };
+        }
+    } catch (err: any) {
+        const msg = String(err?.message || err);
+        console.error('⚠️ [auth] Email lookup failed:', msg);
+    }
+
+    return null;
+}
+
 // POST /api/auth/login
 router.post('/login', async (req: Request, res: Response) => {
     console.log('🔵 [auth] POST /login handler called');
@@ -27,10 +72,7 @@ router.post('/login', async (req: Request, res: Response) => {
         }
 
         console.log('   🔍 Looking up admin in database...');
-        // Find admin by username (frontend can send email field as login identifier)
-        const admin = await prisma.admin.findUnique({
-            where: { username: loginId },
-        });
+        const admin = await findAdminForLogin(loginId);
 
         if (!admin) {
             console.log('   ❌ Admin not found');
@@ -80,10 +122,39 @@ router.post('/login', async (req: Request, res: Response) => {
 router.get('/me', authMiddleware as any, async (req: Request, res: Response) => {
     try {
         const adminId = (req as AuthRequest).adminId;
-        const admin = await prisma.admin.findUnique({
-            where: { id: adminId },
-            select: { id: true, username: true, createdAt: true },
-        });
+        let admin: { id: number; username: string; createdAt: Date } | null = null;
+
+        try {
+            const byUsername = await prisma.$queryRaw<Array<{ id: number; username: string; createdAt: Date }>>`
+                SELECT id, username, createdAt
+                FROM admins
+                WHERE id = ${adminId}
+                LIMIT 1
+            `;
+            admin = byUsername[0] ?? null;
+        } catch (err: any) {
+            console.error('⚠️ [auth/me] Username read failed:', String(err?.message || err));
+        }
+
+        if (!admin) {
+            try {
+                const byEmail = await prisma.$queryRaw<Array<{ id: number; email: string; createdAt: Date }>>`
+                    SELECT id, email, createdAt
+                    FROM admins
+                    WHERE id = ${adminId}
+                    LIMIT 1
+                `;
+                if (byEmail[0]) {
+                    admin = {
+                        id: byEmail[0].id,
+                        username: byEmail[0].email,
+                        createdAt: byEmail[0].createdAt,
+                    };
+                }
+            } catch (err: any) {
+                console.error('⚠️ [auth/me] Email read failed:', String(err?.message || err));
+            }
+        }
 
         if (!admin) {
             res.status(404).json({
