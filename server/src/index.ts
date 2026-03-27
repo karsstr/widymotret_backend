@@ -43,11 +43,17 @@ console.log('🔄 [3/3] Registering endpoints...');
 
 // Health check
 app.get('/', (req, res) => {
-    res.json({ status: 'ok', message: 'Widymotret API is running' });
+    console.log('📍 GET / called');
+    res.set('Content-Type', 'application/json');
+    res.write('{"status":"ok","message":"Widymotret API is running"}');
+    res.end();
 });
 
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'Widymotret API is running' });
+    console.log('📍 GET /api/health called');
+    res.set('Content-Type', 'application/json');
+    res.write('{"status":"ok","message":"Widymotret API is running"}');
+    res.end();
 });
 
 // Error handling
