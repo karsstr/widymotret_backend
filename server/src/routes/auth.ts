@@ -13,11 +13,11 @@ router.post('/login', async (req: Request, res: Response) => {
     
     try {
         const { username, email, password } = req.body;
-        const emailOrUsername = email || username;
+        const loginId = email || username;
 
-        console.log('   Processing login for:', emailOrUsername);
+        console.log('   Processing login for:', loginId);
 
-        if (!emailOrUsername || !password) {
+        if (!loginId || !password) {
             console.log('   ❌ Missing credentials');
             res.status(400).json({
                 success: false,
@@ -27,9 +27,9 @@ router.post('/login', async (req: Request, res: Response) => {
         }
 
         console.log('   🔍 Looking up admin in database...');
-        // Find admin by email
+        // Find admin by username (frontend can send email field as login identifier)
         const admin = await prisma.admin.findUnique({
-            where: { email: emailOrUsername },
+            where: { username: loginId },
         });
 
         if (!admin) {
@@ -63,7 +63,7 @@ router.post('/login', async (req: Request, res: Response) => {
                 token,
                 admin: {
                     id: admin.id,
-                    username: admin.email,
+                    username: admin.username,
                 },
             },
         });
@@ -82,7 +82,7 @@ router.get('/me', authMiddleware as any, async (req: Request, res: Response) => 
         const adminId = (req as AuthRequest).adminId;
         const admin = await prisma.admin.findUnique({
             where: { id: adminId },
-            select: { id: true, email: true, createdAt: true },
+            select: { id: true, username: true, createdAt: true },
         });
 
         if (!admin) {

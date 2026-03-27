@@ -12,15 +12,15 @@ async function main() {
     const hashedPassword = await bcrypt.hash('Widy@M0tr3t2026', 10);
 
     const admin = await prisma.admin.upsert({
-        where: { email: 'admin@widymotret.com' },
+        where: { username: 'admin@widymotret.com' },
         update: {},
         create: {
-            email: 'admin@widymotret.com',
+            username: 'admin@widymotret.com',
             password: hashedPassword,
         },
     });
 
-    console.log(`✅ Admin user created: ${admin.email} (password: Widy@M0tr3t2026`);
+    console.log(`✅ Admin user created: ${admin.username} (password: Widy@M0tr3t2026`);
 
     // Seed all packages from servicesData
     const packages = [
