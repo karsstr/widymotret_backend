@@ -3,6 +3,12 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+// Debug: Log environment variables
+console.log('📌 DEBUG: Environment Variables');
+console.log('   DATABASE_URL:', process.env.DATABASE_URL ? `${process.env.DATABASE_URL.substring(0, 20)}...` : 'NOT SET');
+console.log('   NODE_ENV:', process.env.NODE_ENV || 'NOT SET');
+console.log('   JWT_SECRET:', process.env.JWT_SECRET ? 'SET' : 'NOT SET');
+
 const prisma = new PrismaClient();
 
 // Handle connection errors
