@@ -55,15 +55,12 @@ const ensureDefaultContent = async () => {
     if (isBootstrappingDefaults) return;
     isBootstrappingDefaults = true;
     try {
-        const count = await prisma.content.count();
-        if (count > 0) return;
-
-        console.log('[content] Contents table empty, seeding default editable content...');
+        console.log('[content] Ensuring default editable content rows exist...');
         await prisma.content.createMany({
             data: DEFAULT_CONTENT,
             skipDuplicates: true,
         });
-        console.log(`[content] Seeded ${DEFAULT_CONTENT.length} default content rows`);
+        console.log(`[content] Ensured ${DEFAULT_CONTENT.length} default content rows`);
     } catch (err) {
         console.error('[content] Failed to seed default content:', err);
     } finally {
