@@ -47,6 +47,7 @@ console.log('🔄 [3/3] Registering endpoints...');
 // Health check
 app.get('/', (req, res) => {
     console.log('📍 GET / called');
+    process.stderr.write('📍 GET / called\n');
     res.set('Content-Type', 'application/json');
     res.write('{"status":"ok","message":"Widymotret API is running"}');
     res.end();
@@ -54,9 +55,23 @@ app.get('/', (req, res) => {
 
 app.get('/api/health', (req, res) => {
     console.log('📍 GET /api/health called');
+    process.stderr.write('📍 GET /api/health called\n');
     res.set('Content-Type', 'application/json');
     res.write('{"status":"ok","message":"Widymotret API is running"}');
     res.end();
+});
+
+// Log ALL incoming requests
+app.use((req, res, next) => {
+    console.log(`📨 ${req.method} ${req.path}`);
+    process.stderr.write(`📨 ${req.method} ${req.path}\n`);
+    next();
+});
+
+// 404 handler
+app.use((req, res) => {
+    console.log(`❌ 404: ${req.method} ${req.path}`);
+    res.status(404).json({ status: 'error', message: 'Not found' });
 });
 
 // Error handling
@@ -70,10 +85,15 @@ console.log('   Calling app.listen on', HOST + ':' + PORT);
 
 // Start server
 const server = app.listen(PORT, HOST, () => {
+    const msg = `✅ Server running on http://${HOST}:${PORT}`;
     console.log('+++++++++++++++++++++++++++++++++');
-    console.log(`✅ Server running on http://${HOST}:${PORT}`);
+    console.log(msg);
     console.log(`📋 API Health: http://${HOST}:${PORT}/api/health`);
     console.log('+++++++++++++++++++++++++++++++++');
+    process.stderr.write('+++++++++++++++++++++++++++++++++\n');
+    process.stderr.write(msg + '\n');
+    process.stderr.write(`📋 API Health: http://${HOST}:${PORT}/api/health\n`);
+    process.stderr.write('+++++++++++++++++++++++++++++++++\n');
 });
 
 // Global error handlers
@@ -96,3 +116,11 @@ server.on('clientError', (err: any) => {
 });
 
 console.log('✅ Error handlers registered');
+
+// Keepalive interval untuk memastikan process tetap running
+setInterval(() => {
+    // Log setiap 30 detik
+    // console.log('🔄 Server still alive...', new Date().toISOString());
+}, 30000);
+
+console.log('+++++++++++++++++++++++++++++++++');
