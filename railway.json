@@ -6,7 +6,9 @@
   "deploy": {
     "startCommand": "npm run start"
   },
-  "volumes": {
-    "uploads": "/app/uploads"
-  }
+  "volumes": [
+    {
+      "path": "/app/uploads"
+    }
+  ]
 }
