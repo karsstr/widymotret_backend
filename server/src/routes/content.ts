@@ -15,6 +15,9 @@ const DEFAULT_CONTENT: Array<{ section: string; field: string; value: string }> 
     { section: 'services', field: 'title', value: 'Services' },
     { section: 'services', field: 'subtitle', value: 'untuk merencanakan dan mengatur acara spesial Anda' },
 
+    { section: 'featured', field: 'title', value: 'Potret Unggulan' },
+    { section: 'featured', field: 'subtitle', value: 'Sekilas pandang dari beberapa karya terbaik kami.' },
+
     { section: 'booking', field: 'title', value: 'Alur Booking' },
     { section: 'booking', field: 'subtitle', value: 'Mulai dari konsultasi, pemilihan paket, hingga hari H — semua kami siapkan dengan profesional.' },
     { section: 'booking', field: 'step1_title', value: 'Konsultasi & Cek Tanggal' },
