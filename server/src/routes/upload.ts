@@ -7,10 +7,11 @@ import { authMiddleware } from '../middleware/auth';
 const router: Router = express.Router();
 
 // Ensure uploads directory exists
-const uploadDir = path.join(process.cwd(), 'uploads');
+const uploadDir = process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(process.cwd(), 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
+console.log('[upload] Storage directory:', uploadDir);
 
 // Configure storage
 const storage = multer.diskStorage({

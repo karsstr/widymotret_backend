@@ -52,10 +52,12 @@ app.use(express.json());
 app.options('*', cors(corsOptions));
 
 // Serve uploaded files
-const uploadDir = path.join(process.cwd(), 'uploads');
+const uploadDir = process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(process.cwd(), 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
+console.log('📦 Upload storage path:', uploadDir);
+console.log('📦 RAILWAY_VOLUME_MOUNT_PATH:', process.env.RAILWAY_VOLUME_MOUNT_PATH || '(not set)');
 app.use('/uploads', express.static(uploadDir));
 
 console.log('🔄 [4/4] Registering endpoints...');
