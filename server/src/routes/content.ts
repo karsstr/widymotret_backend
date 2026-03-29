@@ -7,6 +7,10 @@ const router = Router();
 const DEFAULT_CONTENT: Array<{ section: string; field: string; value: string }> = [
     { section: 'hero', field: 'title', value: 'Setiap Momen Punya Cerita' },
     { section: 'hero', field: 'subtitle', value: 'Kami mengabadikan momen melalui foto dan video dengan pendekatan yang sederhana, rapi, dan penuh perhatian pada detail.' },
+    { section: 'hero', field: 'carousel_0', value: '/home (1).png' },
+    { section: 'hero', field: 'carousel_1', value: '/home (2).jpg' },
+    { section: 'hero', field: 'carousel_2', value: '/home (3).jpg' },
+    { section: 'hero', field: 'carousel_3', value: '/home (4).jpg' },
 
     { section: 'introduction', field: 'heading', value: 'Halo, Anda sudah menemukan kami!' },
     { section: 'introduction', field: 'description1', value: 'Di antara perjalanan waktu dan berbagai pertemuan yang tak terduga, akhirnya kita dipertemukan di momen ini. Kami senang karya kami bisa menarik perhatian Anda.' },
@@ -17,6 +21,11 @@ const DEFAULT_CONTENT: Array<{ section: string; field: string; value: string }> 
 
     { section: 'featured', field: 'title', value: 'Potret Unggulan' },
     { section: 'featured', field: 'subtitle', value: 'Sekilas pandang dari beberapa karya terbaik kami.' },
+    { section: 'featured', field: 'portrait_0', value: '/portrait/portrait (1).png' },
+    { section: 'featured', field: 'portrait_1', value: '/portrait/portrait (2).png' },
+    { section: 'featured', field: 'portrait_2', value: '/portrait/portrait (3).png' },
+    { section: 'featured', field: 'portrait_3', value: '/portrait/portrait (4).png' },
+    { section: 'featured', field: 'portrait_4', value: '/portrait/portrait (5).png' },
 
     { section: 'booking', field: 'title', value: 'Alur Booking' },
     { section: 'booking', field: 'subtitle', value: 'Mulai dari konsultasi, pemilihan paket, hingga hari H — semua kami siapkan dengan profesional.' },
