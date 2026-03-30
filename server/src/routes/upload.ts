@@ -11,11 +11,27 @@ const uploadDir = process.env.RAILWAY_VOLUME_MOUNT_PATH ||
                   process.env.UPLOAD_DIR || 
                   path.resolve(process.cwd(), 'server', 'uploads');
 
+console.log('[upload] DEBUG INFO:');
+console.log('[upload]   PWD:', process.cwd());
+console.log('[upload]   NODE_ENV:', process.env.NODE_ENV);
+console.log('[upload]   RAILWAY_VOLUME_MOUNT_PATH:', process.env.RAILWAY_VOLUME_MOUNT_PATH || '(not set)');
+console.log('[upload]   UPLOAD_DIR:', process.env.UPLOAD_DIR || '(not set)');
+console.log('[upload]   Resolved uploadDir:', uploadDir);
+
 // Ensure uploads directory exists
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
+    console.log('[upload] Created uploads directory:', uploadDir);
 }
-console.log('[upload] Storage directory:', uploadDir);
+console.log('[upload] Upload storage path:', uploadDir);
+console.log('[upload] Uploads directory exists:', fs.existsSync(uploadDir));
+
+try {
+    fs.accessSync(uploadDir, fs.constants.R_OK);
+    console.log('[upload] Uploads directory readable: true');
+} catch (e) {
+    console.log('[upload] Uploads directory readable: false', e);
+}
 
 // Configure storage
 const storage = multer.diskStorage({
@@ -45,6 +61,8 @@ const upload = multer({
 // POST /api/upload - Single image upload (protected)
 router.post('/', authMiddleware as any, upload.single('file'), (req: Request, res: Response) => {
     try {
+        console.log(`[DEBUG upload] ========== UPLOAD REQUEST ==========`);
+        console.log(`[DEBUG upload] Timestamp: ${new Date().toISOString()}`);
         console.log(`[DEBUG upload] Request received. File:`, req.file ? {
             fieldname: req.file.fieldname,
             originalname: req.file.originalname,
@@ -57,13 +75,21 @@ router.post('/', authMiddleware as any, upload.single('file'), (req: Request, re
         } : 'NO FILE');
 
         if (!req.file) {
-            console.log(`[DEBUG upload] No file uploaded`);
+            console.log(`[DEBUG upload] ❌ No file uploaded`);
             res.status(400).json({ success: false, message: 'Tidak ada file yang diunggah' });
             return;
         }
 
+        // Verify file was actually saved
+        const fileExists = fs.existsSync(req.file.path);
+        const fileSize = fileExists ? fs.statSync(req.file.path).size : 0;
+        console.log(`[DEBUG upload] File exists at ${req.file.path}: ${fileExists}`);
+        console.log(`[DEBUG upload] File size: ${fileSize} bytes`);
+
         const imageUrl = `/uploads/${req.file.filename}`;
-        console.log(`[DEBUG upload] File saved successfully at: ${imageUrl}`);
+        console.log(`[DEBUG upload] ✅ File saved successfully at: ${imageUrl}`);
+        console.log(`[DEBUG upload] Full path: ${req.file.path}`);
+        console.log(`[DEBUG upload] Response URL: ${imageUrl}`);
         
         res.json({
             success: true,
@@ -72,9 +98,42 @@ router.post('/', authMiddleware as any, upload.single('file'), (req: Request, re
                 url: imageUrl
             }
         });
+        
+        console.log(`[DEBUG upload] ========== UPLOAD COMPLETE ==========\n`);
     } catch (error: any) {
-        console.error(`[DEBUG upload] Error:`, error);
+        console.error(`[DEBUG upload] ❌ Error:`, error);
         res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// GET /api/upload/debug/list - List all files in uploads directory (debug only)
+router.get('/debug/list', (req: Request, res: Response) => {
+    try {
+        const files = fs.readdirSync(uploadDir);
+        const fileStats = files.map(filename => {
+            const filePath = path.join(uploadDir, filename);
+            const stat = fs.statSync(filePath);
+            return {
+                filename,
+                path: filePath,
+                size: stat.size,
+                created: stat.birthtime,
+                url: `/uploads/${filename}`
+            };
+        });
+        
+        res.json({
+            success: true,
+            uploadDir,
+            totalFiles: files.length,
+            files: fileStats
+        });
+    } catch (error: any) {
+        res.status(500).json({ 
+            success: false, 
+            message: error.message,
+            uploadDir 
+        });
     }
 });
 
