@@ -2,12 +2,17 @@ import express, { Request, Response, Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { authMiddleware } from '../middleware/auth';
 
 const router: Router = express.Router();
 
+// Get consistent directory regardless of where process is started
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const uploadDir = process.env.RAILWAY_VOLUME_MOUNT_PATH || 
+                  path.resolve(__dirname, '../../uploads');
+
 // Ensure uploads directory exists
-const uploadDir = process.env.RAILWAY_VOLUME_MOUNT_PATH || path.join(process.cwd(), 'uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
