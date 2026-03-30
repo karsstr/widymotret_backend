@@ -171,7 +171,7 @@ async function main() {
         { section: 'settings', field: 'whatsapp', value: '62895351115777' },
         { section: 'settings', field: 'instagram', value: '@widymotretstudio' },
 
-        // About Page
+        // About Page - Text Content
         { section: 'about_page', field: 'tagline', value: 'A passionate photographer with an eye for honest, powerful moments' },
         { section: 'about_page', field: 'story_heading', value: 'My story' },
         { section: 'about_page', field: 'story_paragraph1', value: 'My love for photography started with a borrowed camera and a sunset.' },
@@ -186,6 +186,21 @@ async function main() {
         { section: 'about_page', field: 'cta_heading', value: 'Made up your mind yet?' },
         { section: 'about_page', field: 'cta_subheading', value: "Let's talk about your visions and how I can bring them to life" },
         { section: 'about_page', field: 'cta_button', value: 'Contact me' },
+
+        // About Page - Image Fields
+        { section: 'about', field: 'hero_main', value: '/portrait/portrait (1).png' },
+        { section: 'about', field: 'hero_right_top', value: '/landscape/landscape (2).png' },
+        { section: 'about', field: 'hero_right_bottom', value: '/landscape/landscape (3).png' },
+        { section: 'about', field: 'story_img1', value: '/portrait/portrait (2).png' },
+        { section: 'about', field: 'story_img2', value: '/portrait/portrait (3).png' },
+        { section: 'about', field: 'btl_left1', value: '/landscape/landscape (1).png' },
+        { section: 'about', field: 'btl_left2', value: '/landscape/landscape (2).png' },
+        { section: 'about', field: 'btl_left3', value: '/landscape/landscape (3).png' },
+        { section: 'about', field: 'btl_center', value: '/portrait/portrait (2).png' },
+        { section: 'about', field: 'btl_right1', value: '/landscape/landscape (4).png' },
+        { section: 'about', field: 'btl_right2', value: '/portrait/portrait (3).png' },
+        { section: 'about', field: 'btl_right3', value: '/portrait/portrait (4).png' },
+        { section: 'about', field: 'team_photo', value: '/landscape/landscape (5).png' },
     ];
 
     for (const item of defaultContent) {
