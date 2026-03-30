@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
 
 // Load environment variables
 dotenv.config();
@@ -52,10 +51,10 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.options('*', cors(corsOptions));
 
-// Get consistent directory regardless of where process is started
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// Get consistent directory - use process.env or server root
 const uploadDir = process.env.RAILWAY_VOLUME_MOUNT_PATH || 
-                  path.resolve(__dirname, '../../uploads');
+                  process.env.UPLOAD_DIR || 
+                  path.resolve(process.cwd(), 'server', 'uploads');
 
 // Ensure uploads directory exists
 if (!fs.existsSync(uploadDir)) {
