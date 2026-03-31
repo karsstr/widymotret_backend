@@ -10,6 +10,9 @@ async function main() {
         { section: 'footer', field: 'email', value: 'widymotret@gmail.com' },
         { section: 'footer', field: 'phone', value: '+62 895-3511-15777' },
         { section: 'footer', field: 'address', value: 'Jl. Raya Pernasidi No.3, Cilongok, Banyumas – Jawa Tengah' },
+        { section: 'footer', field: 'facebook_url', value: 'https://www.facebook.com/dalban.speed.71/' },
+        { section: 'footer', field: 'instagram_url', value: 'https://www.instagram.com/widymotretstudio/' },
+        { section: 'footer', field: 'whatsapp_url', value: 'https://api.whatsapp.com/send/?phone=62895351115777%3F&type=phone_number&app_absent=0' },
     ];
 
     for (const item of footerContent) {
