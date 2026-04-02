@@ -8,7 +8,7 @@ const router = Router();
 router.get('/', async (req: Request, res: Response) => {
     try {
         const packages = await prisma.package.findMany({
-            orderBy: { createdAt: 'desc' },
+            orderBy: { createdAt: 'asc' },
         });
 
         res.json({
