@@ -18,16 +18,18 @@ model Admin {
 }
 
 model Package {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String   @db.Text
-  price       Int
-  category    String
-  images      Json?
-  features    Json
-  isPublished Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                 Int      @id @default(autoincrement())
+  name               String
+  description        String   @db.Text
+  price              Int
+  category           String
+  images             Json?
+  features           Json
+  isPublished        Boolean  @default(true)
+  whatsappLinkType   String   @default("studio")
+  customWhatsappUrl  String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
   @@map("packages")
 }

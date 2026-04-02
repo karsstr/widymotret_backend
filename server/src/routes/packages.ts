@@ -56,7 +56,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST /api/packages - Create package (protected)
 router.post('/', authMiddleware as any, async (req: Request, res: Response) => {
     try {
-        const { name, description, price, category, images, features, isPublished } = req.body;
+        const { name, description, price, category, images, features, isPublished, whatsappLinkType, customWhatsappUrl } = req.body;
 
         if (!name || !description || price === undefined || !category) {
             res.status(400).json({
@@ -75,6 +75,8 @@ router.post('/', authMiddleware as any, async (req: Request, res: Response) => {
                 images: images || [],
                 features: features || [],
                 isPublished: isPublished !== undefined ? isPublished : true,
+                whatsappLinkType: whatsappLinkType || 'studio',
+                customWhatsappUrl: customWhatsappUrl || null,
             },
         });
 
@@ -96,7 +98,7 @@ router.post('/', authMiddleware as any, async (req: Request, res: Response) => {
 router.put('/:id', authMiddleware as any, async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id);
-        const { name, description, price, category, images, features, isPublished } = req.body;
+        const { name, description, price, category, images, features, isPublished, whatsappLinkType, customWhatsappUrl } = req.body;
 
         const existing = await prisma.package.findUnique({
             where: { id },
@@ -120,6 +122,8 @@ router.put('/:id', authMiddleware as any, async (req: Request, res: Response) =>
                 ...(images !== undefined && { images }),
                 ...(features !== undefined && { features }),
                 ...(isPublished !== undefined && { isPublished }),
+                ...(whatsappLinkType !== undefined && { whatsappLinkType }),
+                ...(customWhatsappUrl !== undefined && { customWhatsappUrl }),
             },
         });
 
