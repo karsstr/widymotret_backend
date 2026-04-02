@@ -182,10 +182,10 @@ router.put('/:section/:field', authMiddleware as any, async (req: Request, res: 
         const { section, field } = req.params;
         const { value } = req.body;
 
-        console.log(`[DEBUG content.PUT] Updating: section=${section}, field=${field}, value=${value}`);
+        console.log(`[content.PUT] Updating: section=${section}, field=${field}, value length=${value?.length || 0}`);
 
         if (value === undefined) {
-            console.log(`[DEBUG content.PUT] Value is undefined`);
+            console.log(`[content.PUT] Value is undefined - rejecting`);
             res.status(400).json({
                 success: false,
                 message: 'Value wajib diisi',
@@ -199,12 +199,7 @@ router.put('/:section/:field', authMiddleware as any, async (req: Request, res: 
             create: { section: section as string, field: field as string, value },
         });
 
-        console.log(`[DEBUG content.PUT] Successfully upserted:`, {
-            id: content.id,
-            section: content.section,
-            field: content.field,
-            value: content.value,
-        });
+        console.log(`[content.PUT] ✓ Upserted: section=${content.section}, field=${content.field}, value length=${content.value.length}`);
 
         res.json({
             success: true,
@@ -218,8 +213,15 @@ router.put('/:section/:field', authMiddleware as any, async (req: Request, res: 
             },
         });
     } catch (error) {
-        console.error('[DEBUG content.PUT] Error:', error);
-        res.status(500).json({ success: false, message: 'Terjadi kesalahan server' });
+        console.error('[content.PUT] ✗ Error:', error instanceof Error ? error.message : error);
+        if (error instanceof Error) {
+            console.error('[content.PUT] Stack:', error.stack);
+        }
+        res.status(500).json({ 
+            success: false, 
+            message: `Terjadi kesalahan server: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            error: process.env.NODE_ENV === 'development' ? error : undefined
+        });
     }
 });
 
@@ -236,43 +238,68 @@ router.post('/batch', authMiddleware as any, async (req: Request, res: Response)
             return;
         }
 
+        console.log(`[content.batch] Starting batch update of ${updates.length} items`);
+        
         const results = [];
         for (const update of updates) {
-            const content = await prisma.content.upsert({
-                where: { section_field: { section: update.section, field: update.field } },
-                update: { value: update.value },
-                create: { section: update.section, field: update.field, value: update.value },
-            });
-            results.push({
-                id: String(content.id),
-                section: content.section,
-                field: content.field,
-                value: content.value,
-                updated_at: content.updatedAt.toISOString(),
-            });
+            try {
+                const content = await prisma.content.upsert({
+                    where: { section_field: { section: update.section, field: update.field } },
+                    update: { value: update.value },
+                    create: { section: update.section, field: update.field, value: update.value },
+                });
+                results.push({
+                    id: String(content.id),
+                    section: content.section,
+                    field: content.field,
+                    value: content.value,
+                    updated_at: content.updatedAt.toISOString(),
+                    success: true,
+                });
+            } catch (itemError) {
+                console.error(`[content.batch] Item failed: section=${update.section}, field=${update.field}`, itemError);
+                results.push({
+                    section: update.section,
+                    field: update.field,
+                    success: false,
+                    error: itemError instanceof Error ? itemError.message : 'Unknown error',
+                });
+            }
         }
 
+        const allSuccessful = results.every((r: any) => r.success);
+        console.log(`[content.batch] ✓ Completed: ${allSuccessful ? 'all successful' : 'some failed'}`);
+        
         res.json({
-            success: true,
-            message: `${results.length} konten berhasil diperbarui`,
+            success: allSuccessful,
+            message: allSuccessful 
+                ? `${results.length} konten berhasil diperbarui` 
+                : `${results.filter((r: any) => r.success).length}/${results.length} konten berhasil diperbarui`,
             data: results,
         });
     } catch (error) {
-        console.error('Batch update content error:', error);
-        res.status(500).json({ success: false, message: 'Terjadi kesalahan server' });
+        console.error('[content.batch] Fatal error:', error instanceof Error ? error.message : error);
+        res.status(500).json({ 
+            success: false, 
+            message: `Terjadi kesalahan server: ${error instanceof Error ? error.message : 'Unknown error'}` 
+        });
     }
 });
 
 // DELETE /api/content/:section/:field - Delete content (protected)
+// DELETE /api/content/:section/:field - Actually delete a content field (protected)
 router.delete('/:section/:field', authMiddleware as any, async (req: Request, res: Response) => {
     try {
         const { section, field } = req.params;
+        
+        console.log(`[content.DELETE] Attempting to delete: section=${section}, field=${field}`);
 
         const existing = await prisma.content.findUnique({
             where: { section_field: { section: section as string, field: field as string } },
         });
 
         if (!existing) {
+            console.log(`[content.DELETE] Not found`);
             res.status(404).json({
                 success: false,
                 message: 'Konten tidak ditemukan',
@@ -284,13 +311,17 @@ router.delete('/:section/:field', authMiddleware as any, async (req: Request, re
             where: { section_field: { section: section as string, field: field as string } },
         });
 
+        console.log(`[content.DELETE] ✓ Deleted successfully`);
         res.json({
             success: true,
             message: 'Konten berhasil dihapus',
         });
     } catch (error) {
-        console.error('Delete content error:', error);
-        res.status(500).json({ success: false, message: 'Terjadi kesalahan server' });
+        console.error('[content.DELETE] ✗ Error:', error instanceof Error ? error.message : error);
+        res.status(500).json({ 
+            success: false, 
+            message: `Terjadi kesalahan server: ${error instanceof Error ? error.message : 'Unknown error'}` 
+        });
     }
 });
 
