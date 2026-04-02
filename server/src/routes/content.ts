@@ -67,6 +67,43 @@ const DEFAULT_CONTENT: Array<{ section: string; field: string; value: string }> 
     { section: 'home', field: 'cta_heading', value: 'Wujudkan momen terbaik Anda bersama kami' },
     { section: 'home', field: 'cta_subheading', value: 'Hubungi kami sekarang untuk konsultasi gratis dan penawaran paket terbaik.' },
     { section: 'home', field: 'cta_button', value: 'Hubungi Sekarang' },
+
+    // About page content
+    { section: 'about_page', field: 'tagline', value: 'A passionate photographer with an eye for honest, powerful moments' },
+    { section: 'about_page', field: 'story_heading', value: 'My story' },
+    { section: 'about_page', field: 'story_paragraph0', value: 'My love for photography started with a borrowed camera and a sunset.' },
+    { section: 'about_page', field: 'story_paragraph1', value: 'Since then, I\'ve chased light, laughter, and the in-between moments that make life feel real.' },
+    { section: 'about_page', field: 'story_paragraph2', value: 'I photograph to preserve stories—the ones you\'re living right now.' },
+    { section: 'about_page', field: 'philosophy_quote', value: 'I believe great photography happens when people feel seen, not posed.' },
+    { section: 'about_page', field: 'behind_lens_heading', value: 'Behind the Lens' },
+    { section: 'about_page', field: 'behind_lens_tagline', value: 'When I\'m not behind the camera, I\'m hiking, sipping coffee, or chasing sunsets.' },
+    { section: 'about_page', field: 'behind_lens_description', value: 'Photography isn\'t just what I do—it\'s how I experience the world. This approach shapes every frame I capture.' },
+    { section: 'about_page', field: 'team_heading', value: 'The Team' },
+    { section: 'about_page', field: 'team_description', value: 'While I started this journey solo, I\'ve gathered a talented group of photographers and videographers who share the same passion for authentic storytelling.' },
+    { section: 'about_page', field: 'cta_heading', value: 'Ready to tell your story?' },
+    { section: 'about_page', field: 'cta_subheading', value: 'Let\'s create something beautiful together and capture your most precious moments.' },
+    { section: 'about_page', field: 'cta_button', value: 'Start Your Session' },
+
+    // Footer section
+    { section: 'footer', field: 'studio_description', value: 'Mengabadikan momen abadi bersama orang-orang terkasih. Kami percaya setiap momen memiliki cerita uniknya sendiri.' },
+    { section: 'footer', field: 'copyright_text', value: '© 2025 Studio Photography. All rights reserved.' },
+    { section: 'footer', field: 'tagline', value: 'Made with ♥ for capturing love' },
+    { section: 'footer', field: 'email', value: 'admin@widymotret.com' },
+    { section: 'footer', field: 'phone', value: '+62 895-3511-5777' },
+    { section: 'footer', field: 'address', value: 'Bandung, Indonesia' },
+    { section: 'footer', field: 'facebook_url', value: 'https://www.facebook.com/widymotret/' },
+    { section: 'footer', field: 'instagram_url', value: 'https://www.instagram.com/widymotretstudio/' },
+    { section: 'footer', field: 'whatsapp_url', value: 'https://api.whatsapp.com/send/?phone=62895351115777' },
+    { section: 'footer', field: 'quick_link_0_label', value: 'Home' },
+    { section: 'footer', field: 'quick_link_0_url', value: '/' },
+    { section: 'footer', field: 'quick_link_1_label', value: 'Portfolio' },
+    { section: 'footer', field: 'quick_link_1_url', value: '/#portfolio' },
+    { section: 'footer', field: 'quick_link_2_label', value: 'Harga' },
+    { section: 'footer', field: 'quick_link_2_url', value: '/' },
+    { section: 'footer', field: 'quick_link_3_label', value: 'Tentang' },
+    { section: 'footer', field: 'quick_link_3_url', value: '/#about' },
+    { section: 'footer', field: 'quick_link_4_label', value: 'Hubungi' },
+    { section: 'footer', field: 'quick_link_4_url', value: '/#contact' },
 ];
 
 let isBootstrappingDefaults = false;
