@@ -43,6 +43,7 @@ const DEFAULT_CONTENT: Array<{ section: string; field: string; value: string }> 
     { section: 'booking', field: 'step6_description', value: 'Proses editing dilakukan sesuai standar kualitas studio, lalu hasil diserahkan sesuai paket yang dipilih.' },
 
     { section: 'testimonials', field: 'title', value: 'What They Say' },
+    { section: 'testimonials', field: 'subtitle', value: 'dari pasangan bahagia dan puas' },
     { section: 'testimonials', field: 'quote1', value: 'Cara kalian menangkap momen hari kami sungguh luar biasa. Setiap foto adalah harta karun.' },
     { section: 'testimonials', field: 'author1', value: 'Racheal and Tim' },
     { section: 'testimonials', field: 'quote2', value: 'Profesional, sabar, dan sangat berbakat.' },
