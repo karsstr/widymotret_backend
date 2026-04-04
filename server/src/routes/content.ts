@@ -107,6 +107,10 @@ const DEFAULT_CONTENT: Array<{ section: string; field: string; value: string }> 
     { section: 'footer', field: 'quick_link_3_url', value: '/#about' },
     { section: 'footer', field: 'quick_link_4_label', value: 'Hubungi' },
     { section: 'footer', field: 'quick_link_4_url', value: '/#contact' },
+
+    // Portfolio stats section (editable)
+    { section: 'portfolio', field: 'happy_clients', value: '500+' },
+    { section: 'portfolio', field: 'years_experience', value: '5+' },
 ];
 
 let isBootstrappingDefaults = false;
