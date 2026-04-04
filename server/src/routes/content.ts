@@ -111,6 +111,8 @@ const DEFAULT_CONTENT: Array<{ section: string; field: string; value: string }> 
     // Portfolio stats section (editable)
     { section: 'portfolio', field: 'happy_clients', value: '500+' },
     { section: 'portfolio', field: 'years_experience', value: '5+' },
+    { section: 'portfolio', field: 'total_photos', value: '' },
+    { section: 'portfolio', field: 'categories', value: '' },
 ];
 
 let isBootstrappingDefaults = false;
