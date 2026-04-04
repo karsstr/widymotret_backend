@@ -223,6 +223,24 @@ async function main() {
     }
 
     console.log(`✅ ${defaultContent.length} content fields seeded`);
+
+    // Seed default portfolio categories
+    const portfolioCategories = [
+        { name: 'Portrait', slug: 'portrait', description: 'Potret pribadi dengan fokus pada detail wajah dan ekspresi', tagExample: 'Portrait #1', orderIndex: 1, isActive: true },
+        { name: 'Event', slug: 'event', description: 'Dokumentasi acara dan perayaan dengan suasana meriah', tagExample: 'Event #2', orderIndex: 2, isActive: true },
+        { name: 'Editorial', slug: 'editorial', description: 'Karya editorial dengan konsep kreatif dan tema khusus', tagExample: 'Editorial #3', orderIndex: 3, isActive: true },
+        { name: 'Retouching', slug: 'retouching', description: 'Karya dengan retouching professional dan editing tingkat lanjut', tagExample: 'Retouching #4', orderIndex: 4, isActive: true },
+    ];
+
+    for (const category of portfolioCategories) {
+        await prisma.portfolioCategory.upsert({
+            where: { slug: category.slug },
+            update: {},
+            create: category,
+        });
+    }
+
+    console.log(`✅ ${portfolioCategories.length} portfolio categories seeded`);
     console.log('🎉 Seeding complete!');
 }
 

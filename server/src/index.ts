@@ -90,6 +90,7 @@ try {
     const contentRoutes = require('./routes/content').default;
     const packageRoutes = require('./routes/packages').default;
     const portfolioRoutes = require('./routes/portfolios').default;
+    const portfolioCategoryRoutes = require('./routes/portfolioCategories').default;
     const uploadRoutes = require('./routes/upload').default;
     
     console.log('✅ Route modules imported');
@@ -100,6 +101,7 @@ try {
     app.use('/api/content', contentRoutes);
     app.use('/api/packages', packageRoutes);
     app.use('/api/portfolios', portfolioRoutes);
+    app.use('/api/portfolio-categories', portfolioCategoryRoutes);
     app.use('/api/upload', uploadRoutes);
     
     console.log('✅ Route handlers mounted:');

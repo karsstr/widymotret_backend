@@ -46,6 +46,21 @@ model Portfolio {
   @@map("portfolios")
 }
 
+model PortfolioCategory {
+  id               Int      @id @default(autoincrement())
+  name             String
+  slug             String   @unique
+  description      String   @db.Text
+  tagExample       String
+  examplePhotoUrl  String?
+  isActive         Boolean  @default(true)
+  orderIndex       Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("portfolio_categories")
+}
+
 model Content {
   id        Int      @id @default(autoincrement())
   section   String
