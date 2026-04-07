@@ -32,6 +32,7 @@ const allowedOrigins = [
     'http://localhost:5173',
     'https://widymotretstudio.vercel.app',
     'https://widymotretstudio-git-be-fix-dimazs-projects.vercel.app',
+    'https://www.widymotretstudio.com',
 ];
 
 const corsOptions = {
